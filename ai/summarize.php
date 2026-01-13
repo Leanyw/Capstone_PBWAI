@@ -1,8 +1,28 @@
 <?php
 header('Content-Type: application/json');
 
-// 🔐 TOKEN HUGGING FACE
-$HF_TOKEN = " ";
+// 🔐 Load TOKEN dari .env file
+$envPath = __DIR__ . '/../.env';
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        // Skip comments
+        if (strpos(trim($line), '#') === 0) continue;
+        
+        // Parse KEY=VALUE
+        if (strpos($line, '=') !== false) {
+            list($key, $value) = explode('=', $line, 2);
+            $_ENV[trim($key)] = trim($value);
+        }
+    }
+}
+
+$HF_TOKEN = $_ENV['HF_TOKEN'] ?? '';
+
+if (empty($HF_TOKEN)) {
+    echo json_encode(["summary" => "Error: HF_TOKEN tidak ditemukan di .env"]);
+    exit;
+}
 
 // 📝 Ambil text
 $text = trim($_POST['text'] ?? '');
