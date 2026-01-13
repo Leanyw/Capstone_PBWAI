@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 
 // 🔐 TOKEN HUGGING FACE
-$HF_TOKEN = " ";
+$HF_TOKEN = "";
 
 // 📝 Ambil text
 $text = trim($_POST['text'] ?? '');
