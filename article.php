@@ -21,8 +21,8 @@
                                 <input type="text" class="form-control" name="judul" placeholder="Tuliskan Judul Artikel" required>
                             </div>
                             <div class="mb-3">
-                                <label for="floatingTextarea2">Isi</label>
-                                <textarea class="form-control" placeholder="Tuliskan Isi Artikel" name="isi" required></textarea>
+                            <label for="floatingTextarea2">Isi</label>
+                            <textarea class="form-control" id="isi" placeholder="Tuliskan Isi Artikel" name="isi" required></textarea>
                             </div>
                             <!-- 🔥 FIELD SUMMARY (BARU) -->
                             <div class="mb-3">
@@ -188,11 +188,46 @@ if (isset($_POST['simpan'])) {
     }
     
     if ($stmt->execute()) {
-        echo "<script>alert('Berhasil! Summary tersimpan.'); location.reload();</script>";
+       // BENAR (Redirect ke URL bersih tanpa POST data)
+echo "<script>
+    alert('Berhasil simpan data');
+    window.location.href='admin.php?page=article';
+</script>";
     } else {
         echo "<script>alert('Error: " . addslashes($stmt->error) . "');</script>";
     }
     
+    $stmt->close();
+    $conn->close();
+}
+
+if (isset($_POST['hapus'])) {
+    $id = $_POST['id'];
+    $gambar = $_POST['gambar'];
+
+    if ($gambar != '') {
+        // Hapus file gambar dari folder img jika ada
+        if (file_exists("img/" . $gambar)) {
+            unlink("img/" . $gambar);
+        }
+    }
+
+    $stmt = $conn->prepare("DELETE FROM article WHERE id = ?");
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo "<script>
+            alert('Yakin ingin menghapus data?');
+            alert('Hapus data berhasil');
+            document.location='admin.php?page=article';
+        </script>";
+    } else {
+        echo "<script>
+            alert('Hapus data gagal');
+            document.location='admin.php?page=article';
+        </script>";
+    }
+
     $stmt->close();
     $conn->close();
 }

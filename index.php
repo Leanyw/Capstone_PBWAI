@@ -552,38 +552,66 @@ include "koneksi.php";
     </section>
 
     <!-- ARTICLE -->
-    <section id="article" class="text-center p-5">
-    <div class="container">
-        <h1 class="fw-bold display-4 pb-3">article</h1>
-        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-        <?php
-        $sql = "SELECT * FROM article ORDER BY tanggal DESC";
-        $hasil = $conn->query($sql); 
+<section id="article" class="text-center p-5">
+  <div class="container">
+    <h1 class="fw-bold display-4 pb-3">Article</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+      <?php
+      $sql = "SELECT * FROM article ORDER BY tanggal DESC";
+      $hasil = $conn->query($sql);
 
-        while($row = $hasil->fetch_assoc()){
-        ?>
-            <div class="col">
-            <div class="card h-100">
-                <img src="img/<?= $row["gambar"]?>" class="card-img-top" alt="..." />
-                <div class="card-body">
-                <h5 class="card-title"><?= $row["judul"]?></h5>
-                <p class="card-text">
-                    <?= $row["isi"]?>
-                </p>
-                </div>
-                <div class="card-footer">
-                <small class="text-body-secondary">
-                    <?= $row["tanggal"]?>
-                </small>
-                </div>
+      while ($row = $hasil->fetch_assoc()) {
+      ?>
+        <div class="col">
+          <div class="card h-100 shadow-sm border-dark">
+            <img src="img/<?= $row["gambar"] ?>" class="card-img-top" alt="..." />
+            <div class="card-body">
+              <h5 class="card-title fw-bold"><?= $row["judul"] ?></h5>
+              
+              <p class="card-text text-muted" style="font-size: 0.9rem;">
+                <?php if(!empty($row['summary'])): ?>
+                   <span class="badge bg-info text-dark mb-2">AI Summary</span><br>
+                   <?= $row["summary"] ?>
+                <?php else: ?>
+                   <?= substr($row["isi"], 0, 100) ?>...
+                <?php endif; ?>
+              </p>
             </div>
+            <div class="card-footer bg-transparent border-top-0 pb-3">
+               <button class="btn btn-outline-dark btn-sm" data-bs-toggle="modal" data-bs-target="#modalDetail<?= $row['id'] ?>">
+                 Baca Selengkapnya
+               </button>
+               <br>
+               <small class="text-muted" style="font-size: 0.7rem;"><?= $row["tanggal"] ?></small>
             </div>
-            <?php
-        }
-        ?> 
+          </div>
         </div>
+
+        <div class="modal fade" id="modalDetail<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title fw-bold"><?= $row['judul'] ?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-start">
+                <img src="img/<?= $row["gambar"] ?>" class="img-fluid rounded mb-3 w-100" alt="">
+                <?php if(!empty($row['summary'])): ?>
+                  <div class="alert alert-info">
+                    <strong>Ringkasan AI:</strong><br><?= $row['summary'] ?>
+                  </div>
+                <?php endif; ?>
+                <div style="white-space: pre-wrap;"><?= $row['isi'] ?></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php
+      }
+      ?>
     </div>
-    </section>
+  </div>
+</section>
 
     <!-- GALLERY -->
     <section id="gallery" class="text-center p-5">
